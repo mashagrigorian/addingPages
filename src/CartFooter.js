@@ -1,11 +1,16 @@
 function CartFooter({items}) {
-    const footerResult = items.reduce((a, b) => a = a + b.price,0);
+
+    const priceResult = () =>
+    items.reduce((total, currentValue) => {
+        let sum = Number(currentValue.price.split('$').join(''));
+        return total + currentValue.quantity * sum
+    }, 0)
 
     return (
     <div>
         <div> Subtotal: </div>
         <div>
-            $ {footerResult}
+            $ {priceResult(items)}
         </div>
         <button>Checkout</button>
     </div>

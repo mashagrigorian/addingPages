@@ -4,9 +4,9 @@ const CartItemList = ({items, onDelete}) => {
  
      return (
              <div>
-                 {items.map((item, i) => {
+                 {items.map((item) => {
                      return (
-                         <CartItem key= {i} item={item} onDelete= {onDelete} />
+                         <CartItem key= {item.id} item={item} onDelete= {onDelete} />
                      )
                  })}         
                 

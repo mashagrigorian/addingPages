@@ -1,52 +1,53 @@
-import {useState} from "react";
+import React, { useState, useEffect } from "react";
 import CartHeader from "./CartHeader";
 import CartItemList from "./CartItemList";
 import CartFooter from "./CartFooter";
+import "./App.css";
+import HashLoader from "react-spinners/HashLoader";
 
-const Cart = () => {
+function Cart() {
+    const [items, setItems] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+    }, []);
 
-    const [items, setItems] = useState(
-        { 
-            items: [       
-            {
-                id: Math.random(),
-                name: "Blender",
-                quantity: 1,
-                color: "Black",
-                price: 1400,
-                image: "https://www.shop.philips.ru/media/catalog/product/cache/19/thumbnail/450x450/163b81649b7ef7bc8a00b0066e59ae0a/h/r/hr3571_90_image_08.jpg"
-             },
-             { 
-                id: Math.random(),
-                 name: "Blanket",
-                 quantity: 1,
-                 color: "Red", 
-                 price: 200,
-                 image: "https://cdn-mw.niceshops.com/upload/image/product/large/default/zoeppritz-blanket-soft-fleece-strawberry-763992-en.jpg"
-             }     
-        ], 
-            subtotal: 0},)
+    async function datas() {
+        const datas =  await fetch("././MOCK_DATA.json");
+        datas.json().then(result => setTimeout(() => {
+            setItems(result)
+        }, 1000));
+    }
+        useEffect(() => {
+        datas();
+    }, []);
 
-
-const onDelete = (id) => {
-    let delItem = items.items.filter(item => {
+    const onDelete = (id) => {
+    let delItem = items.filter(item => {
         return item.id !== id
     });
-    setItems({
-        items: delItem
-    });
-}
+    setItems(delItem);
+    }
 
-return (
-    <div>
-        <CartHeader/>
-        <CartItemList
-            items={items.items}
-            onDelete={onDelete}
-        />
-        <CartFooter items={items.items}/>
-    </div>
-)
-}
+    if(!items) {
+        return <HashLoader size={50} color={"#36D7B7"} loading={loading} />
+    }
+
+    return (
+        <div className="App">
+            <CartHeader/>
+            {items.length === 0 && (<p>No items in cart.</p>) }
+            <CartItemList
+                items={items}
+                onDelete={onDelete}
+            />
+            <CartFooter items={items}/> 
+            </div>
+            )
+            }
 
 export default Cart;
