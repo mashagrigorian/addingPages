@@ -1,53 +1,41 @@
-import React, { useState, useEffect } from "react";
-import CartHeader from "./CartHeader";
-import CartItemList from "./CartItemList";
-import CartFooter from "./CartFooter";
+import React from "react";
 import "./App.css";
-import HashLoader from "react-spinners/HashLoader";
+import {CartContext} from './CartContext'
+import { useContext } from 'react';
+
 
 function Cart() {
-    const [items, setItems] = useState(null);
-    const [loading, setLoading] = useState(false);
-    
-    useEffect(() => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-    }, []);
+    const {cart, onDelete} = useContext(CartContext);
 
-    async function datas() {
-        const datas =  await fetch("././MOCK_DATA.json");
-        datas.json().then(result => setTimeout(() => {
-            setItems(result)
-        }, 1000));
-    }
-        useEffect(() => {
-        datas();
-    }, []);
-
-    const onDelete = (id) => {
-    let delItem = items.filter(item => {
-        return item.id !== id
-    });
-    setItems(delItem);
-    }
-
-    if(!items) {
-        return <HashLoader size={50} color={"#36D7B7"} loading={loading} />
-    }
 
     return (
-        <div className="App">
-            <CartHeader/>
-            {items.length === 0 && (<p>No items in cart.</p>) }
-            <CartItemList
-                items={items}
-                onDelete={onDelete}
-            />
-            <CartFooter items={items}/> 
-            </div>
-            )
-            }
+
+        <div>
+            {cart.length ===0 && (
+                <div>Your cart is empty</div>
+                
+            )}
+            {
+                cart && cart.map(cartItem => {
+                        return (
+                            <div key={cartItem.id}>
+                                <h2>Product Name:{cartItem.name}</h2>
+                                <p>Product Price:{cartItem.price}</p>
+                                <p>Product Color:{cartItem.color}</p>
+                                <p>Product Description:{cartItem.description}</p>
+                                {!cartItem.image && (
+                                    <img src='/default-thumbnail.jpg' style={{height: '150px'}}/>
+                                )}
+                                <img src={cartItem.image} alt=""/><br />
+                                <button onClick={() => {
+                                onDelete(cartItem.id);
+                            }}>Delete</button>
+                            </div>
+                        )
+                    })
+                }
+        </div>
+    )}
+            
 
 export default Cart;
